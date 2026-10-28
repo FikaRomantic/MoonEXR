@@ -30,6 +30,9 @@ pub fn ExrFile::open(
   let lines = h.compression.scanlines()
   let height = h.data_window.height()
   let count = (height - 1) / lines + 1
+  if count > limits.max_chunks {
+    raise Limit("chunk directory entries")
+  }
   let table_end = add(h.end, mul(count, 8))
   if table_end > bytes.length() {
     raise Invalid("truncated chunk offset table", h.end)

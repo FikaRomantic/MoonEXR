@@ -76,6 +76,13 @@ async fn run() -> Unit {
       }).stringify(),
     )
   } else if args[1] == "bits" {
+    let samples = file.header().data_window().pixels().to_int64() *
+      file.header().channels().length().to_int64()
+    if samples > 1000000L {
+      raise Failure(
+        "bits JSON is limited to one million samples; use batch API",
+      )
+    }
     let img = file.read()
     let (x0, y0, _, _) = img.window().bounds()
     let channels : Map[String, Json] = Map([])

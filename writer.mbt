@@ -50,6 +50,9 @@ pub fn Writer::new(
   let head = header_bytes(attrs)
   let parsed = parse_header(head, limits)
   let count = (window.height() - 1) / compression.scanlines() + 1
+  if count > limits.max_chunks {
+    raise Limit("writer chunk directory entries")
+  }
   if add(head.length(), mul(count, 8)) > limits.max_file_bytes {
     raise Limit("writer prefix bytes")
   }

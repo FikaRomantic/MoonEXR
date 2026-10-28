@@ -272,6 +272,7 @@ test "resource budgets stop file header channel and logical image allocations" {
       { ..limits, max_pixels: 132, },
       { ..limits, max_channels: 2, },
       { ..limits, max_attributes: 2, },
+      { ..limits, max_chunks: 1, },
       { ..limits, max_decoded_bytes: 10, },
       { ..limits, max_channels: 0, },
     ] {

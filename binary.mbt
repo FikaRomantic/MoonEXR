@@ -15,6 +15,7 @@ pub(all) struct Limits {
   max_pixels : Int32
   max_channels : Int32
   max_attributes : Int32
+  max_chunks : Int32
   max_decoded_bytes : Int32
 } derive(Debug, Eq)
 
@@ -32,6 +33,7 @@ pub fn Limits::default() -> Limits {
     max_pixels: 16777216,
     max_channels: 64,
     max_attributes: 1024,
+    max_chunks: 65536,
     max_decoded_bytes: 268435456,
   }
 }
@@ -43,6 +45,7 @@ fn Limits::validate(self : Limits) -> Unit raise ExrError {
     self.max_pixels < 1 ||
     self.max_channels < 1 ||
     self.max_attributes < 1 ||
+    self.max_chunks < 1 ||
     self.max_decoded_bytes < 1 {
     raise Limit("invalid resource limits")
   }

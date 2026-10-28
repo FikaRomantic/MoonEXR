@@ -59,6 +59,9 @@ pub fn encode(
   let height = image.data_window.height()
   let lines = compression.scanlines()
   let count = (height - 1) / lines + 1
+  if count > limits.max_chunks {
+    raise Limit("writer chunk directory entries")
+  }
   let prefix_size = add(header.length(), mul(count, 8))
   if prefix_size > limits.max_file_bytes {
     raise Limit("offset table/file budget")
