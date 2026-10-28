@@ -1,0 +1,4 @@
+MoonEXR
+Original MoonBit implementation, 2026.
+OpenEXR is a separate Academy Software Foundation project; used as a format reference and independent test oracle.
+Windows argv adapter reused under Apache-2.0 from local MoonORC/MoonH5 tooling.
