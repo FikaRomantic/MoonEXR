@@ -92,10 +92,13 @@ pub fn ExrFile::chunks(self : ExrFile) -> Array[ChunkInfo] {
 pub fn ExrFile::plan(self : ExrFile, region : Window) -> Array[ChunkInfo] {
   match self.header.data_window.intersection(region) {
     None => []
-    Some(w) =>
-      self.chunks.filter(c => {
-        c.y <= w.y1 && c.y.to_int64() + c.rows.to_int64() > w.y0.to_int64()
-      })
+    Some(w) => {
+      let first = ((w.y0.to_int64() - self.header.data_window.y0.to_int64()) /
+      self.header.compression.scanlines().to_int64()).to_int()
+      let last = ((w.y1.to_int64() - self.header.data_window.y0.to_int64()) /
+      self.header.compression.scanlines().to_int64()).to_int()
+      Array::makei(last - first + 1, i => self.chunks[first + i])
+    }
   }
 }
 

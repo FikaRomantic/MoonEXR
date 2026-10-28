@@ -2,14 +2,16 @@
 /// IEEE binary16 expansion without arithmetic on NaN payloads.
 pub fn half_to_float_bits(bits : Int32) -> UInt32 {
   let h = bits & 65535
-  let sign = (h & 32768).to_uint() << 16
+  let sign = (h & 32768).reinterpret_as_uint() << 16
   let exp = (h >> 10) & 31
   let mut frac = h & 1023
   if exp == 31 {
-    return sign | 0x7f800000U | (frac.to_uint() << 13)
+    return sign | 0x7f800000U | (frac.reinterpret_as_uint() << 13)
   }
   if exp != 0 {
-    return sign | ((exp + 112).to_uint() << 23) | (frac.to_uint() << 13)
+    return sign |
+      ((exp + 112).reinterpret_as_uint() << 23) |
+      (frac.reinterpret_as_uint() << 13)
   }
   if frac == 0 {
     return sign
@@ -19,7 +21,9 @@ pub fn half_to_float_bits(bits : Int32) -> UInt32 {
     frac = frac << 1
     e -= 1
   }
-  sign | ((e + 127).to_uint() << 23) | ((frac & 1023).to_uint() << 13)
+  sign |
+  ((e + 127).reinterpret_as_uint() << 23) |
+  ((frac & 1023).reinterpret_as_uint() << 13)
 }
 
 ///|
@@ -38,14 +42,14 @@ fn rounded_shift(v : UInt32, n : Int32) -> UInt32 {
 /// Round IEEE binary32 to binary16, round-to-nearest with ties to even.
 /// Sign and the high payload bits survive NaNs; a truncated payload stays nonzero.
 pub fn float_bits_to_half(bits : UInt32) -> Int32 {
-  let sign = (bits >> 16).to_int() & 32768
-  let exp = ((bits >> 23) & 255U).to_int()
+  let sign = (bits >> 16).reinterpret_as_int() & 32768
+  let exp = ((bits >> 23) & 255U).reinterpret_as_int()
   let frac = bits & 0x7fffffU
   if exp == 255 {
     if frac == 0U {
       return sign | 31744
     }
-    return sign | 31744 | imax(1, (frac >> 13).to_int())
+    return sign | 31744 | imax(1, (frac >> 13).reinterpret_as_int())
   }
   let e = exp - 127
   if e > 15 {
@@ -56,9 +60,9 @@ pub fn float_bits_to_half(bits : UInt32) -> Int32 {
   }
   let mant = frac | 0x800000U
   if e < -14 {
-    return sign | rounded_shift(mant, -e - 1).to_int()
+    return sign | rounded_shift(mant, -e - 1).reinterpret_as_int()
   }
-  let n = rounded_shift(mant, 13).to_int()
+  let n = rounded_shift(mant, 13).reinterpret_as_int()
   sign | (((e + 14) << 10) + n)
 }
 

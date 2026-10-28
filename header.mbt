@@ -115,7 +115,7 @@ fn parse_header(bytes : Bytes, limits : Limits) -> Header raise ExrError {
     raise Unsupported("tiled, deep, multipart or unknown file flags")
   }
   let maximum_name = if (version & 1024U) != 0U { 255 } else { 31 }
-  let attrs : Map[String, Attribute] = {}
+  let attrs : Map[String, Attribute] = Map([])
   let ordered : Array[Attribute] = []
   while true {
     if r.pos >= limits.max_header_bytes {

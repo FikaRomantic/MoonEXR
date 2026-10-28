@@ -78,7 +78,7 @@ async fn run() -> Unit {
   } else if args[1] == "bits" {
     let img = file.read()
     let (x0, y0, _, _) = img.window().bounds()
-    let channels : Map[String, Json] = {}
+    let channels : Map[String, Json] = Map([])
     for ch in img.channels() {
       let p = img.plane(ch.name)
       let values : Array[Json] = []

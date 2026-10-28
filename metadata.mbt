@@ -143,8 +143,8 @@ fn write_attribute(out : Sink, attr : Attribute) -> Unit {
 
 ///|
 test "typed metadata helpers retain Unicode text and unknown bytes" {
-  let a = Attribute::text("comments", "光谱\x00内嵌")
-  assert_eq(a.as_text(), "光谱\x00内嵌")
+  let a = Attribute::text("comments", "光谱\u0000内嵌")
+  assert_eq(a.as_text(), "光谱\u0000内嵌")
   assert_eq(Attribute::integer("frame", -123).as_integer(), -123)
   assert_eq(Attribute::real("exposure", 2.5).as_real(), 2.5)
   let coords = [0.64, 0.33, 0.3, 0.6, 0.15, 0.06, 0.3127, 0.329]

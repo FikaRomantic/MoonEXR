@@ -46,7 +46,7 @@ pub fn Image::new(
   if metadata.length() > limits.max_attributes - 8 {
     raise Limit("image metadata count")
   }
-  let names : Map[String, Bool] = {}
+  let names : Map[String, Bool] = Map([])
   let mut header_size = 0
   for a in metadata {
     a.validate(limits.max_header_bytes)

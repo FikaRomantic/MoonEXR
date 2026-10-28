@@ -141,7 +141,7 @@ pub fn Plane::value_at(
   let bits = self.bits_at(x, y)
   match self.channel.kind {
     U32 => bits.to_double()
-    F16 => half_value(bits.to_int())
+    F16 => half_value(bits.reinterpret_as_int())
     F32 => Float::reinterpret_from_uint(bits).to_double()
   }
 }

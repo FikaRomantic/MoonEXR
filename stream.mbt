@@ -57,13 +57,11 @@ pub fn Scan::next(self : Scan) -> Image? raise ExrError {
   if self.failed {
     raise Invalid("scanner permanently failed after decoding error", 0)
   }
-  self.advance() catch {
-    error => {
-      self.failed = true
-      self.pending = None
-      raise error
-    }
+  errdefer {
+    self.failed = true
+    self.pending = None
   }
+  self.advance()
 }
 
 ///|
@@ -94,9 +92,10 @@ fn Scan::advance(self : Scan) -> Image? raise ExrError {
     self.pending_row + rows - 1,
   )
   let result = image.crop(region, limits=self.file.limits)
-  self.pending_row = (self.pending_row.to_int64() + rows.to_int64()).to_int()
   if region.y1 == w.y1 {
     self.pending = None
+  } else {
+    self.pending_row += rows
   }
   Some(result)
 }

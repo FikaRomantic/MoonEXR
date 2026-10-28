@@ -16,7 +16,7 @@ fn selected_channels(
       if names.is_empty() {
         raise Invalid("empty channel selection", 0)
       }
-      let seen : Map[String, Bool] = {}
+      let seen : Map[String, Bool] = Map([])
       let selected : Array[Channel] = []
       for name in names {
         if seen.contains(name) {
@@ -67,7 +67,7 @@ pub fn ExrFile::read_with_stats(
   }
   let selected = selected_channels(h.channels, channels)
   let buffers : Array[Array[Byte]] = []
-  let destinations : Map[String, Int32] = {}
+  let destinations : Map[String, Int32] = Map([])
   for i = 0; i < selected.length(); i = i + 1 {
     destinations[selected[i].name] = i
     buffers.push(
