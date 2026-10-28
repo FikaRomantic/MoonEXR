@@ -1,0 +1,47 @@
+name: check-build-test
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install official MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Check build test every backend
+        run: |
+          moon version --all
+          moon check --target all --deny-warn
+          moon build --target all --deny-warn
+          moon test --target all --deny-warn
+      - name: Format and public API
+        run: |
+          moon fmt --check
+          moon info
+          git diff --exit-code
+      - name: Run application scenarios and scale workload
+        run: |
+          moon run examples/render_assets --target native --deny-warn
+          moon run examples/scientific_imaging --target native --deny-warn
+          moon run examples/offline_preview --target js --deny-warn
+          moon run examples/scale --target native --release --deny-warn
+      - name: Official OpenEXR independent oracle
+        run: |
+          python -m pip install -r scripts/requirements-interop.txt
+          python scripts/interop.py verify _build/native/debug/build/cmd/main/main.exe
+      - name: Local package and source hygiene
+        run: |
+          moon package
+          python scripts/verify_repository.py

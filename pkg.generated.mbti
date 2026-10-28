@@ -1,0 +1,235 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/moonexr"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn encode(Image, compression? : Compression, limits? : Limits) -> Bytes raise ExrError
+
+pub fn float_bits_to_half(UInt32) -> Int32
+
+pub fn half_to_float_bits(Int32) -> UInt32
+
+pub fn half_value(Int32) -> Double
+
+pub fn merge(Array[Image], limits? : Limits) -> Image raise ExrError
+
+// Errors
+pub suberror ExrError {
+  Invalid(String, Int32)
+  Unsupported(String)
+  Limit(String)
+} derive(@debug.Debug)
+pub fn ExrError::to_repr(Self) -> @debug.Repr
+
+// Types and methods
+pub(all) struct Attribute {
+  name : String
+  kind : String
+  value : Bytes
+} derive(Eq, @debug.Debug)
+pub fn Attribute::as_chromaticities(Self) -> Array[Double] raise ExrError
+pub fn Attribute::as_integer(Self) -> Int32 raise ExrError
+pub fn Attribute::as_real(Self) -> Double raise ExrError
+pub fn Attribute::as_text(Self) -> String raise ExrError
+pub fn Attribute::chromaticities(Array[Double]) -> Self raise ExrError
+pub fn Attribute::equal(Self, Self) -> Bool
+pub fn Attribute::integer(String, Int32) -> Self raise ExrError
+pub fn Attribute::not_equal(Self, Self) -> Bool
+pub fn Attribute::real(String, Double) -> Self raise ExrError
+pub fn Attribute::text(String, String) -> Self raise ExrError
+pub fn Attribute::to_repr(Self) -> @debug.Repr
+
+pub(all) struct Channel {
+  name : String
+  kind : PixelType
+  linear : Bool
+} derive(Eq, @debug.Debug)
+pub fn Channel::equal(Self, Self) -> Bool
+pub fn Channel::layer(Self) -> String
+pub fn Channel::not_equal(Self, Self) -> Bool
+pub fn Channel::to_repr(Self) -> @debug.Repr
+
+pub(all) struct ChunkInfo {
+  y : Int32
+  rows : Int32
+  offset : Int32
+  encoded_bytes : Int32
+  decoded_bytes : Int32
+} derive(Eq, @debug.Debug)
+pub fn ChunkInfo::equal(Self, Self) -> Bool
+pub fn ChunkInfo::not_equal(Self, Self) -> Bool
+pub fn ChunkInfo::to_repr(Self) -> @debug.Repr
+
+pub(all) enum Compression {
+  None
+  Rle
+  Zips
+  Zip
+} derive(Eq, @debug.Debug)
+pub fn Compression::equal(Self, Self) -> Bool
+pub fn Compression::not_equal(Self, Self) -> Bool
+pub fn Compression::scanlines(Self) -> Int32
+pub fn Compression::to_repr(Self) -> @debug.Repr
+
+pub struct ExrFile {
+  // private fields
+}
+pub fn ExrFile::chunks(Self) -> Array[ChunkInfo]
+pub fn ExrFile::header(Self) -> Header
+pub fn ExrFile::open(Bytes, limits? : Limits) -> Self raise ExrError
+pub fn ExrFile::plan(Self, Window) -> Array[ChunkInfo]
+pub fn ExrFile::read(Self, region? : Window?, channels? : Array[String]?) -> Image raise ExrError
+pub fn ExrFile::read_with_stats(Self, region? : Window?, channels? : Array[String]?) -> ReadResult raise ExrError
+pub fn ExrFile::scan(Self, region? : Window?, channels? : Array[String]?, batch_rows? : Int32) -> Scan raise ExrError
+
+pub struct Header {
+  // private fields
+}
+pub fn Header::attribute(Self, String) -> Attribute?
+pub fn Header::channels(Self) -> Array[Channel]
+pub fn Header::compression(Self) -> Compression
+pub fn Header::data_window(Self) -> Window
+pub fn Header::display_window(Self) -> Window
+pub fn Header::line_order(Self) -> Int32
+pub fn Header::metadata(Self) -> Array[Attribute]
+
+pub(all) struct Histogram {
+  lower : Double
+  upper : Double
+  bins : Array[Int32]
+  below : Int32
+  above : Int32
+  nonfinite : Int32
+}
+
+pub struct Image {
+  // private fields
+}
+pub fn Image::channels(Self) -> Array[Channel]
+pub fn Image::crop(Self, Window, limits? : Limits) -> Self raise ExrError
+pub fn Image::display_window(Self) -> Window
+pub fn Image::layers(Self) -> Array[String]
+pub fn Image::metadata(Self) -> Array[Attribute]
+pub fn Image::new(Window, Array[Plane], display? : Window, metadata? : Array[Attribute], pixel_aspect? : Double, screen_center? : (Double, Double), screen_width? : Double, limits? : Limits) -> Self raise ExrError
+pub fn Image::pixel_aspect(Self) -> Double
+pub fn Image::plane(Self, String) -> Plane raise ExrError
+pub fn Image::preview_rgba(Self, rgb? : Array[String], alpha? : String?, options? : PreviewOptions, limits? : Limits) -> Bytes raise ExrError
+pub fn Image::rename(Self, Map[String, String], limits? : Limits) -> Self raise ExrError
+pub fn Image::replace_plane(Self, Plane, limits? : Limits) -> Self raise ExrError
+pub fn Image::screen(Self) -> (Double, Double, Double)
+pub fn Image::select(Self, Array[String], limits? : Limits) -> Self raise ExrError
+pub fn Image::select_layer(Self, String, limits? : Limits) -> Self raise ExrError
+pub fn Image::translate(Self, Int32, Int32, limits? : Limits) -> Self raise ExrError
+pub fn Image::window(Self) -> Window
+pub fn Image::with_metadata(Self, Array[Attribute], limits? : Limits) -> Self raise ExrError
+
+pub(all) struct Limits {
+  max_file_bytes : Int32
+  max_header_bytes : Int32
+  max_pixels : Int32
+  max_channels : Int32
+  max_attributes : Int32
+  max_chunks : Int32
+  max_decoded_bytes : Int32
+} derive(Eq, @debug.Debug)
+pub fn Limits::default() -> Self
+pub fn Limits::equal(Self, Self) -> Bool
+pub fn Limits::not_equal(Self, Self) -> Bool
+pub fn Limits::to_repr(Self) -> @debug.Repr
+
+pub(all) enum PixelType {
+  U32
+  F16
+  F32
+} derive(Eq, @debug.Debug)
+pub fn PixelType::bytes(Self) -> Int32
+pub fn PixelType::equal(Self, Self) -> Bool
+pub fn PixelType::not_equal(Self, Self) -> Bool
+pub fn PixelType::to_repr(Self) -> @debug.Repr
+
+pub struct Plane {
+  // private fields
+}
+pub fn Plane::bits_at(Self, Int32, Int32) -> UInt32 raise ExrError
+pub fn Plane::channel(Self) -> Channel
+pub fn Plane::convert(Self, PixelType, limits? : Limits) -> Self raise ExrError
+pub fn Plane::from_bits(Channel, Window, Bytes, limits? : Limits) -> Self raise ExrError
+pub fn Plane::from_values(Channel, Window, Array[Double], limits? : Limits) -> Self raise ExrError
+pub fn Plane::histogram(Self, Double, Double, Int32) -> Histogram raise ExrError
+pub fn Plane::map_values(Self, (Double) -> Double, output_type? : PixelType, limits? : Limits) -> Self raise ExrError
+pub fn Plane::sample_bits(Self) -> Bytes
+pub fn Plane::statistics(Self) -> PlaneStatistics raise ExrError
+pub fn Plane::value_at(Self, Int32, Int32) -> Double raise ExrError
+pub fn Plane::window(Self) -> Window
+
+pub(all) struct PlaneStatistics {
+  samples : Int32
+  finite_samples : Int32
+  nan_samples : Int32
+  positive_infinities : Int32
+  negative_infinities : Int32
+  negative_zeros : Int32
+  minimum : Double?
+  maximum : Double?
+  mean : Double?
+  population_variance : Double?
+} derive(@debug.Debug)
+pub fn PlaneStatistics::to_repr(Self) -> @debug.Repr
+
+pub(all) struct PreviewOptions {
+  exposure_stops : Double
+  gamma : Double
+  tone_map : ToneMap
+  premultiplied_alpha : Bool
+} derive(@debug.Debug)
+pub fn PreviewOptions::default() -> Self
+pub fn PreviewOptions::to_repr(Self) -> @debug.Repr
+
+pub struct ReadResult {
+  image : Image
+  chunks_decoded : Int32
+  bytes_decoded : Int32
+}
+
+pub struct Scan {
+  // private fields
+}
+pub fn Scan::chunks_decoded(Self) -> Int32
+pub fn Scan::next(Self) -> Image? raise ExrError
+
+pub(all) enum ToneMap {
+  Clamp
+  Reinhard
+} derive(Eq, @debug.Debug)
+pub fn ToneMap::equal(Self, Self) -> Bool
+pub fn ToneMap::not_equal(Self, Self) -> Bool
+pub fn ToneMap::to_repr(Self) -> @debug.Repr
+
+pub struct Window {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub fn Window::bounds(Self) -> (Int32, Int32, Int32, Int32)
+pub fn Window::contains(Self, Int32, Int32) -> Bool
+pub fn Window::equal(Self, Self) -> Bool
+pub fn Window::height(Self) -> Int32
+pub fn Window::intersection(Self, Self) -> Self?
+pub fn Window::new(Int32, Int32, Int32, Int32) -> Self raise ExrError
+pub fn Window::not_equal(Self, Self) -> Bool
+pub fn Window::pixels(Self) -> Int32 raise ExrError
+pub fn Window::to_repr(Self) -> @debug.Repr
+pub fn Window::width(Self) -> Int32
+
+pub struct Writer {
+  // private fields
+}
+pub fn Writer::finish(Self) -> Bytes raise ExrError
+pub fn Writer::new(Window, Array[Channel], display? : Window, metadata? : Array[Attribute], compression? : Compression, limits? : Limits) -> Self raise ExrError
+pub fn Writer::push(Self, Image) -> Unit raise ExrError
+pub fn Writer::rows_received(Self) -> Int32
+
+// Type aliases
+
+// Traits
