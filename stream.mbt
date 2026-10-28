@@ -89,7 +89,7 @@ fn Scan::advance(self : Scan) -> Image? raise ExrError {
     w.x0,
     self.pending_row,
     w.x1,
-    self.pending_row + rows - 1,
+    (self.pending_row.to_int64() + rows.to_int64() - 1L).to_int(),
   )
   let result = image.crop(region, limits=self.file.limits)
   if region.y1 == w.y1 {

@@ -71,7 +71,7 @@ pub fn Image::new(
       raise Invalid("finite screen/aspect value required", 0)
     }
   }
-  if pixel_aspect <= 0.0 || screen_width < 0.0 {
+  if Float::from_double(pixel_aspect).to_double() <= 0.0 || screen_width < 0.0 {
     raise Invalid("invalid aspect/width", 0)
   }
   {

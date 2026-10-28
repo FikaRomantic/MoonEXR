@@ -129,7 +129,11 @@ pub fn Plane::bits_at(
 ) -> UInt32 raise ExrError {
   let width = self.channel.kind.bytes()
   let start = mul(self.window.offset(x, y), width)
-  reader(self.data[start:start + width].to_owned()).uint(width).to_uint()
+  let mut bits = 0U
+  for i = 0; i < width; i = i + 1 {
+    bits = bits | (self.data[start + i].to_uint() << (8 * i))
+  }
+  bits
 }
 
 ///|

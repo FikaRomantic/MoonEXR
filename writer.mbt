@@ -38,6 +38,8 @@ pub fn Writer::new(
     names[ch.name] = true
   }
   let attrs = header_attributes(window, display, ordered, compression)
+  let metadata = metadata.copy()
+  metadata.sort_by((a, b) => name_compare(a.name, b.name))
   for attr in metadata {
     attr.validate(limits.max_header_bytes)
     if reserved(attr.name) {
