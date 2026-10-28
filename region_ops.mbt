@@ -5,9 +5,17 @@ pub fn Image::crop(
   region : Window,
   limits~ : Limits = Limits::default(),
 ) -> Image raise ExrError {
+  limits.validate()
   let window = match self.data_window.intersection(region) {
     Some(w) => w
     None => raise Invalid("crop does not intersect image", 0)
+  }
+  let mut total = 0
+  for p in self.planes {
+    total = add(total, mul(window.pixels(), p.channel.kind.bytes()))
+  }
+  if window.pixels() > limits.max_pixels || total > limits.max_decoded_bytes {
+    raise Limit("crop output budget")
   }
   let planes = self.planes.map(p => {
     let b = sink()

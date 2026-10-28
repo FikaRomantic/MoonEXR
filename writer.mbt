@@ -38,12 +38,26 @@ pub fn Writer::new(
     names[ch.name] = true
   }
   let attrs = header_attributes(window, display, ordered, compression)
+  if metadata.length() > limits.max_attributes - 8 {
+    raise Limit("writer attribute count")
+  }
+  let mut estimated_header = header_bytes(attrs).length()
   let metadata = metadata.copy()
   metadata.sort_by((a, b) => name_compare(a.name, b.name))
   for attr in metadata {
     attr.validate(limits.max_header_bytes)
     if reserved(attr.name) {
       raise Invalid("reserved writer metadata", 0)
+    }
+    estimated_header = add(
+      estimated_header,
+      add(
+        attr.value.length(),
+        @utf8.encode(attr.name).length() + @utf8.encode(attr.kind).length() + 6,
+      ),
+    )
+    if estimated_header > limits.max_header_bytes {
+      raise Limit("writer metadata bytes")
     }
     attrs.push(attr)
   }

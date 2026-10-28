@@ -299,3 +299,84 @@ test "invalid histogram preview and conversion requests fail before output creat
     image.plane("object.id").sample_bits(),
   )
 }
+
+///|
+/// Resource preflight must happen before invoking an application callback.
+test "derived image budgets are checked before mapping or accumulating metadata" {
+  let image = small_image(4, 4, 0, 0)
+  let calls = Ref(0)
+  assert_true(
+    try {
+      ignore(
+        image
+        .plane("A")
+        .map_values(
+          v => {
+            calls.val += 1
+            v
+          },
+          limits={ ..Limits::default(), max_pixels: 1, },
+        ),
+      )
+      false
+    } catch {
+      _ => true
+    },
+  )
+  assert_eq(calls.val, 0)
+  assert_true(
+    try {
+      ignore(
+        image.crop(image.window(), limits={
+          ..Limits::default(),
+          max_decoded_bytes: 1,
+        }),
+      )
+      false
+    } catch {
+      _ => true
+    },
+  )
+  assert_true(
+    try {
+      ignore(
+        image
+        .plane("A")
+        .convert(F32, limits={ ..Limits::default(), max_pixels: 1, }),
+      )
+      false
+    } catch {
+      _ => true
+    },
+  )
+  assert_true(
+    try {
+      ignore(
+        Writer::new(
+          image.window(),
+          image.channels(),
+          metadata=[Attribute::text("comments", "one")],
+          limits={ ..Limits::default(), max_attributes: 8, },
+        ),
+      )
+      false
+    } catch {
+      _ => true
+    },
+  )
+  assert_true(
+    try {
+      ignore(
+        Writer::new(
+          image.window(),
+          image.channels(),
+          metadata=[Attribute::text("comments", "payload exceeds tiny budget")],
+          limits={ ..Limits::default(), max_header_bytes: 32, },
+        ),
+      )
+      false
+    } catch {
+      _ => true
+    },
+  )
+}

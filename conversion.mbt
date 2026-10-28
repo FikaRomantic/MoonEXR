@@ -6,6 +6,10 @@ pub fn Plane::convert(
   kind : PixelType,
   limits~ : Limits = Limits::default(),
 ) -> Plane raise ExrError {
+  limits.validate()
+  if self.window.pixels() > limits.max_pixels {
+    raise Limit("converted plane pixel count")
+  }
   if kind == self.channel.kind {
     return Plane::from_bits(self.channel, self.window, self.data, limits~)
   }
@@ -64,6 +68,7 @@ pub fn Plane::map_values(
   output_type~ : PixelType = F32,
   limits~ : Limits = Limits::default(),
 ) -> Plane raise ExrError {
+  limits.validate()
   let values : Array[Double] = []
   let w = self.window
   if w.pixels() > limits.max_pixels ||
