@@ -1,12 +1,12 @@
-name = "local/moonexr"
+name = "FikaRomantic/moonexr"
 
 version = "0.1.0"
-
-private = true
 
 license = "Apache-2.0"
 
 readme = "README.md"
+
+repository = "https://github.com/FikaRomantic/MoonEXR"
 
 description = "Bounded native OpenEXR HDR channel interchange and windowed decoding"
 

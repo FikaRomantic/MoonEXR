@@ -1,5 +1,5 @@
 import {
-  "local/moonexr" @exr,
+  "FikaRomantic/moonexr" @exr,
 }
 
 pkgtype(kind: "executable")

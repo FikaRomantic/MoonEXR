@@ -2,7 +2,7 @@
 
 MoonBit 原生的 OpenEXR 高动态范围、多通道图像交换与区域访问库。native、JavaScript、Wasm、Wasm-GC 共用一套格式、压缩和样本逻辑；运行时不绑定 OpenEXR C++ 或 Python。
 
-当前为本地预发布：`local/moonexr`、`private = true`、无公开远程仓库。账号确定后才配置真实模块名和公开安装地址；现在不要执行 `moon add local/moonexr`。
+模块：`FikaRomantic/moonexr@0.1.0`；[GitHub](https://github.com/FikaRomantic/MoonEXR) · [Mooncakes](https://mooncakes.io/docs/FikaRomantic/moonexr)。
 
 ## 生态价值与场景
 
@@ -16,7 +16,7 @@ EXR 通道可以保存颜色，也可以保存深度、法线、传感器强度�
 
 ## 安装与复现
 
-使用 [官方 MoonBit 工具链](https://docs.moonbitlang.com/en/latest/download-and-install.html)；本机验证版本 `moonc 0.10.16`，高于赛事要求0.10.14。固定依赖见 `moon.mod`。
+使用 [官方 MoonBit 工具链](https://docs.moonbitlang.com/en/latest/download-and-install.html)；本机验证版本 `moonc 0.10.16`，符合赛事最低版本要求0.10.16；CI固定使用0.10.16+b1a0e846e。固定依赖见 `moon.mod`。
 
 ```sh
 moon version --all
@@ -29,7 +29,13 @@ moon run examples/offline_preview --target js
 moon run examples/scale --target native --release
 ```
 
-本地工程包导入 `"local/moonexr" @exr`，示例目录已配置，可直接运行。公开依赖安装说明将随真实账号发布补齐。
+在已有 MoonBit 工程中安装：
+
+```sh
+moon add FikaRomantic/moonexr@0.1.0
+```
+
+在使用方的 `moon.pkg` 中配置 `import { "FikaRomantic/moonexr" @exr, }`，即可运行下方最小示例；本仓库的示例目录已配置导入。
 
 Windows 的 Moon20261016 OCaml 子工具可能不接受驱动传入的 `\\?\` 长路径；可用随项目的进程参数适配器（首次构建需要 MSVC Build Tools）：
 
@@ -110,7 +116,7 @@ CLI写入使用CreateNew，拒绝覆盖已有文件；bits输出原始unsigned�
 
 ## 工程验证与资源边界
 
-已配置GitHub Actions的四后端check/build/test、fmt/API一致性、三个场景、规模负载、官方互操作和本地打包卫生检查。远程成功记录须推送后才能确认；本地通过不等于正式赛事验收通过。
+已配置GitHub Actions的四后端check/build/test、fmt/API一致性、三个场景、规模负载、官方互操作和本地打包卫生检查。可在 [Actions](https://github.com/FikaRomantic/MoonEXR/actions) 查看远端执行记录；工程检查不等于正式赛事验收。
 
 默认上限：文件256MiB、header1MiB、像素16,777,216、通道64、属性1024、chunk65,536、逻辑解码256MiB。文件/长度乘加和窗口维度受检；重复属性/通道、重叠chunk、错误解压长度、Adler32、缺失字段和不支持模式明确拒绝。Limits不是进程精确峰值内存；输入、压缩块、临时数组、防御性复制和输出会同时存在，不适合无额外隔离地接收任意规模不可信内容。
 
@@ -122,9 +128,9 @@ CLI写入使用CreateNew，拒绝覆盖已有文件；bits输出原始unsigned�
 
 Apache-2.0，见 LICENSE、NOTICE、THIRD_PARTY.md。依据 [OpenEXR官方格式](https://openexr.com/en/latest/OpenEXRFileLayout.html) 独立实现；测试对照使用 [官方Python API](https://openexr.com/en/latest/python.html)。AI辅助设计与开发；独立测试不替代对生产文件变体的兼容评估。
 
-术语见CONTEXT.md，重要边界见docs/adr，公共接口见pkg.generated.mbti。扩展codec、tiled或multipart之前应增加独立生产者fixture及明确的数据模型。申报书、审查/AI/汇总报告只保存在 `_local` 或仓库外，通过gitignore及打包检查排除。
+术语见CONTEXT.md，重要边界见docs/adr，公共接口见pkg.generated.mbti。扩展codec、tiled或multipart之前应增加独立生产者fixture及明确的数据模型。申报书可保存在项目本地目录；申报书、审查/AI/汇总报告通过gitignore及历史/打包检查排除，不属于开源交付包。
 
 
 ## 十一月新增功能
 
-**位级样本差异与数值误差**（`Plane::compare_samples`）；**对象掩膜下的有限值统计**（`Plane::masked_statistics`）。详见[功能、用途和边界](docs/NOVEMBER_FEATURES.md)，运行 `moon run examples/november --target native --deny-warn`。当前仍为本地未发布源码，不提供虚构安装地址。
+**位级样本差异与数值误差**（`Plane::compare_samples`）；**对象掩膜下的有限值统计**（`Plane::masked_statistics`）。详见[功能、用途和边界](docs/NOVEMBER_FEATURES.md)，运行 `moon run examples/november --target native --deny-warn`。本功能包含于0.1.0，安装方式见上文。
