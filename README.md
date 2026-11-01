@@ -123,3 +123,8 @@ CLI写入使用CreateNew，拒绝覆盖已有文件；bits输出原始unsigned�
 Apache-2.0，见 LICENSE、NOTICE、THIRD_PARTY.md。依据 [OpenEXR官方格式](https://openexr.com/en/latest/OpenEXRFileLayout.html) 独立实现；测试对照使用 [官方Python API](https://openexr.com/en/latest/python.html)。AI辅助设计与开发；独立测试不替代对生产文件变体的兼容评估。
 
 术语见CONTEXT.md，重要边界见docs/adr，公共接口见pkg.generated.mbti。扩展codec、tiled或multipart之前应增加独立生产者fixture及明确的数据模型。申报书、审查/AI/汇总报告只保存在 `_local` 或仓库外，通过gitignore及打包检查排除。
+
+
+## 十一月新增功能
+
+**位级样本差异与数值误差**（`Plane::compare_samples`）；**对象掩膜下的有限值统计**（`Plane::masked_statistics`）。详见[功能、用途和边界](docs/NOVEMBER_FEATURES.md)，运行 `moon run examples/november --target native --deny-warn`。当前仍为本地未发布源码，不提供虚构安装地址。

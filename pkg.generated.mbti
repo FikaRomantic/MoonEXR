@@ -140,6 +140,16 @@ pub fn Limits::equal(Self, Self) -> Bool
 pub fn Limits::not_equal(Self, Self) -> Bool
 pub fn Limits::to_repr(Self) -> @debug.Repr
 
+pub(all) struct MaskedStatistics {
+  selected : Int32
+  finite_samples : Int32
+  nonfinite_samples : Int32
+  minimum : Double?
+  maximum : Double?
+  mean : Double?
+} derive(@debug.Debug)
+pub fn MaskedStatistics::to_repr(Self) -> @debug.Repr
+
 pub(all) enum PixelType {
   U32
   F16
@@ -155,11 +165,13 @@ pub struct Plane {
 }
 pub fn Plane::bits_at(Self, Int32, Int32) -> UInt32 raise ExrError
 pub fn Plane::channel(Self) -> Channel
+pub fn Plane::compare_samples(Self, Self) -> SampleDifference raise ExrError
 pub fn Plane::convert(Self, PixelType, limits? : Limits) -> Self raise ExrError
 pub fn Plane::from_bits(Channel, Window, Bytes, limits? : Limits) -> Self raise ExrError
 pub fn Plane::from_values(Channel, Window, Array[Double], limits? : Limits) -> Self raise ExrError
 pub fn Plane::histogram(Self, Double, Double, Int32) -> Histogram raise ExrError
 pub fn Plane::map_values(Self, (Double) -> Double, output_type? : PixelType, limits? : Limits) -> Self raise ExrError
+pub fn Plane::masked_statistics(Self, Self) -> MaskedStatistics raise ExrError
 pub fn Plane::sample_bits(Self) -> Bytes
 pub fn Plane::statistics(Self) -> PlaneStatistics raise ExrError
 pub fn Plane::value_at(Self, Int32, Int32) -> Double raise ExrError
@@ -193,6 +205,14 @@ pub struct ReadResult {
   chunks_decoded : Int32
   bytes_decoded : Int32
 }
+
+pub(all) struct SampleDifference {
+  samples : Int32
+  changed_bits : Int32
+  finite_pairs : Int32
+  maximum_absolute_error : Double?
+} derive(@debug.Debug)
+pub fn SampleDifference::to_repr(Self) -> @debug.Repr
 
 pub struct Scan {
   // private fields
